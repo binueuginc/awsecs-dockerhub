@@ -15,6 +15,10 @@ pipeline {
 	environment {
 		DOCKERRUN = "docker run -p 8080:8080 my-app binueuginc/sample-myapp:${params.VERSION} " 
 		DOCKERCLEAN = "docker images  | awk '{print \$1 \":\" \$2}' | xargs docker rmi -f"
+                TASK_FAMILY = "sample-myapp-task"
+                SERVICE_NAME = "sample-myapp-service"
+                NEW_DOCKER_IMAGE = "sample-myapp:${params.VERSION}"
+                CLUSTER_NAME = "sample-myapp-cluster"
 	}
          stages {
 	    stage('init'){
