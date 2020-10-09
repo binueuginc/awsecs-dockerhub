@@ -1,0 +1,32 @@
+
+def dockerBuild(){
+   sh "docker build -t binueuginc/sample-myapp:${params.VERSION} ."
+   echo "BUILD VERSION IS ${params.VERSION}"
+   }
+  def testApp(){
+   echo "Testing application......"
+   echo "BUILD VERSION IS ${params.VERSION}"
+   }
+   def dockerPush(){
+   withCredentials([string(credentialsId: 'docker-pwd', variable: 'dockerHubPwd')]) {
+       sh "docker -u binueuginc -p ${dockerHubPwd}"
+      }
+   sh "docker push binueuginc/sample-myapp:${params.VERSION}"
+   echo "BUILD VERSION IS ${params.VERSION}"
+   }
+   def dockerDeployApp(){
+    
+	 sshagent(['dev-server']){
+	   sh "ssh -o StrictHostKeyChecking=no root@192.168.115.245 ${params.dockerRun}"
+	   }
+   echo "BUILD VERSION IS ${params.VERSION}"
+   }
+  def dockerEcsDeployApp(){
+   echo "dockerEcsDeploy ......"
+   echo "BUILD VERSION ${params.VERSION} is Deploying AWS ES"
+   }
+  def dockerCleanup(){
+   echo "docker Clean Up  ......"
+   sh 'docker images  | awk \'!(NR<=1){print $1 ":" $2}\' | xargs docker rmi -f'
+   }
+return this
