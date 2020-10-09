@@ -19,6 +19,10 @@ pipeline {
                 SERVICE_NAME = "sample-myapp-service"
                 NEW_DOCKER_IMAGE = "sample-myapp:${params.VERSION}"
                 CLUSTER_NAME = "sample-myapp-cluster"
+                OLD_TASK_DEF = "aws ecs describe-task-definition --task-definition ${env.TASK_FAMILY} --output json"
+                NEW_TASK_DEF= "echo ${env.OLD_TASK_DEF} | jq --arg NDI ${env.NEW_DOCKER_IMAGE} '.taskDefinition.containerDefinitions[0].image=$NDI'"
+                FINAL_TASK = "echo ${env.NEW_TASK_DEF} | jq '.taskDefinition|\{family: .family, volumes: .volumes, containerDefinitions: .containerDefinitions\}'"
+                
 	}
          stages {
 	    stage('init'){

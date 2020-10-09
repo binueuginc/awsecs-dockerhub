@@ -17,12 +17,14 @@ def dockerBuild(){
    def dockerDeployApp(){
     
 	 sshagent(['dev-server']){
-	   sh "ssh -o StrictHostKeyChecking=no root@192.168.115.245 ${params.dockerRun}"
+	   sh "ssh -o StrictHostKeyChecking=no root@192.168.115.245 ${env.DOCKERRUN}"
 	   }
    echo "BUILD VERSION IS ${params.VERSION}"
    }
   def dockerEcsDeployApp(){
    echo "dockerEcsDeploy ......"
+    sh "aws ecs register-task-definition --family ${env.TASK_FAMILY} --cli-input-json $(echo ${env.FINAL_TASK})" 
+    sh "aws ecs update-service --service ${env.SERVICE_NAME} --task-definition ${env.TASK_FAMILY} --cluster ${env.CLUSTER_NAME}" 
    echo "BUILD VERSION ${params.VERSION} is Deploying AWS ES"
    }
   def dockerCleanup(){
